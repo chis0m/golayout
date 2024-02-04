@@ -1,0 +1,22 @@
+version: "3.9"
+services:
+  database:
+    image: postgres:16-alpine
+    container_name: database
+    environment:
+      - DB_USER=${DB_USER:-root}
+      - DB_PASSWORD=${DB_PASSWORD:-password}
+      - DB_NAME=${DB_NAME:-database}
+    ports:
+      - "${DB_PORT:-5434}:5432"
+    volumes:
+      - ./data/database:/var/lib/postgresql/data
+  redis:
+    image: redis:7-alpine
+    container_name: cache
+    ports:
+      - "${REDIS_PORT:-6384}:6379"
+volumes:
+  data-volume:
+
+

@@ -1,0 +1,123 @@
+Project agency_banking {
+  database_type: 'PostgreSQL'
+  Note: '''
+    # Go Layout
+  '''
+}
+
+Table users {
+    id bigserial [pk]
+    first_name varchar
+    last_name varchar
+    email varchar [not null,unique]
+    email_verified_at timestamptz
+    address varchar
+    bvn varchar
+    created_at timestamptz [default:'now()']
+    updated_at timestamptz [default:'now()']
+    deleted_at timestamptz
+}
+
+Table accounts {
+  id bigserial [pk]
+  user_id bigint [not null,ref: > users.id]
+  account_name varchar
+  account_number varchar
+  currency varchar
+  status varchar
+  wallet_id bigint [not null,ref: > wallets.id]
+  created_at timestamptz [default:'now()']
+  updated_at timestamptz [default:'now()']
+  deleted_at timestamptz [default: null]
+}
+
+Table wallets {
+  id bigserial [pk]
+  uuid varchar [not null]
+  balance bigint [not null]
+  currency varchar(50) [not null]
+  change_amount bigint [not null]
+  locked_amount bigint [not null]
+  status varchar(100) [not null]
+  mode varchar(100) [not null]
+  hash varchar(255) [not null]
+  previous_hash varchar(255) [default: null]
+  transaction_id bigint [not null,ref: > transactions.id]
+  created_at timestamptz [default:'now()']
+  updated_at timestamptz [default:'now()']
+  deleted_at timestamptz [default: null]
+}
+
+Table wallet_history {
+ id int [pk]
+  wallet_id int [not null,ref: > wallets.id]
+  public_id varchar [not null]
+  balance int [not null]
+  currency varchar(50) [not null]
+  change_amount int [not null]
+  locked_amount int [not null]
+  mode varchar(100) [not null]
+  hash varchar(255) [not null]
+  operation varchar(100) [not null]
+  previous_hash varchar(255) [default: null]
+  transaction_id integer [not null,ref: > transactions.id]
+  created_at timestamptz [default:'now()']
+  updated_at timestamptz [default:'now()']
+  deleted_at timestamptz [default: null]
+
+}
+
+Table transactions {
+  id bigserial [pk]
+  mode varchar(100) [not null]
+  reference varchar(100) [not null]
+  transaction_type varchar(100) [not null]
+  transaction_data jsonb [not null]
+  amount bigint [not null]
+  fee bigint [not null]
+  status varchar(100) [not null]
+  source_id int [not null]
+  source_ref varchar [not null]
+  narration varchar(255) [default:null]
+  created_at timestamptz [default:'now()']
+  updated_at timestamptz [default:'now()']
+  deleted_at timestamptz [default: null]
+}
+
+Table liens {
+   id bigserial [pk]
+   wallet_id bigint [not null,ref: > wallets.id]
+   transaction_id bigint [not null,ref: > transactions.id]
+   lien_amount bigint [not null]
+   currency varchar(50) [not null]
+   status varchar(100) [not null]
+   created_at timestamptz [default:'now()']
+   updated_at timestamptz [default:'now()']
+   deleted_at timestamptz [default: null]
+}
+
+Table audit_logs {
+  id bigserial [pk]
+  user_id BigInt [not null, ref: > users.id]
+  actor_id Integer [note: 'ID of the actor performing the action, if different from user_id']
+  actor_type Varchar [note: 'Type of actor (e.g., User, System) to distinguish between users and automated processes']
+  action Varchar [not null, note: 'General type of action performed (e.g., CREATE, UPDATE, DELETE)']
+  description Text [note: 'Detailed description of the action for readability']
+  status Varchar [note: 'Outcome of the action (SUCCESS, FAILURE)']
+  reason Text [note: 'Explanation, particularly for failures or exceptions']
+  ip_address Varchar [note: 'IP address from which the action was performed']
+  resource_type Varchar [note: 'Type of the resource being acted upon (e.g., Account, Document)']
+  resource_id Varchar [note: 'Identifier of the specific resource instance']
+  data Jsonb [note: 'Additional data related to the action in JSON format']
+  created_at Timestamptz [default: 'now()', not null, note: 'Timestamp when the action was logged']
+
+  Indexes {
+    (user_id, created_at)
+    (actor_id, actor_type)
+    (action, status)
+    (resource_type, resource_id)
+    (ip_address)
+    created_at
+  }
+}
+

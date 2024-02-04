@@ -1,0 +1,12 @@
+.idea
+.env
+*error.log
+notes.md
+data/
+http/
+tmp/
+.env.*
+!.env.example
+http
+secrets.go
+deploy/
