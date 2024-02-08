@@ -1,6 +1,6 @@
 -- SQL dump generated using DBML (dbml-lang.org)
 -- Database: PostgreSQL
--- Generated at: 2024-02-04T07:32:32.706Z
+-- Generated at: 2024-02-06T13:04:01.990Z
 
 CREATE TABLE "users" (
   "id" bigserial PRIMARY KEY,
@@ -8,11 +8,43 @@ CREATE TABLE "users" (
   "last_name" varchar,
   "email" varchar UNIQUE NOT NULL,
   "email_verified_at" timestamptz,
+  "password_hash" varchar NOT NULL,
   "address" varchar,
   "bvn" varchar,
   "created_at" timestamptz DEFAULT 'now()',
   "updated_at" timestamptz DEFAULT 'now()',
   "deleted_at" timestamptz
+);
+
+CREATE TABLE "posts" (
+  "id" BIGSERIAL PRIMARY KEY,
+  "user_id" BIGINT NOT NULL,
+  "title" VARCHAR(255) NOT NULL,
+  "content" TEXT NOT NULL,
+  "created_at" TIMESTAMPZ DEFAULT (now()),
+  "updated_at" TIMESTAMPZ DEFAULT (now()),
+  "deleted_at" timestamptz
+);
+
+CREATE TABLE "comments" (
+  "id" BIGSERIAL PRIMARY KEY,
+  "post_id" BIGINT NOT NULL,
+  "user_id" BIGINT NOT NULL,
+  "content" TEXT NOT NULL,
+  "created_at" TIMESTAMPZ DEFAULT (now()),
+  "deleted_at" TIMESTAMPZ
+);
+
+CREATE TABLE "categories" (
+  "id" BIGSERIAL PRIMARY KEY,
+  "name" VARCHAR(255) UNIQUE NOT NULL,
+  "deleted_at" timestamptz
+);
+
+CREATE TABLE "post_categories" (
+  "post_id" BIGINT NOT NULL,
+  "category_id" BIGINT NOT NULL,
+  "Primary" Key(post_id,category_id)
 );
 
 CREATE TABLE "accounts" (
@@ -93,7 +125,7 @@ CREATE TABLE "liens" (
 );
 
 CREATE TABLE "audit_logs" (
-  "id" bigSerial PRIMARY KEY,
+  "id" bigserial PRIMARY KEY,
   "user_id" BigInt NOT NULL,
   "actor_id" Integer,
   "actor_type" Varchar,
@@ -141,6 +173,16 @@ COMMENT ON COLUMN "audit_logs"."resource_id" IS 'Identifier of the specific reso
 COMMENT ON COLUMN "audit_logs"."data" IS 'Additional data related to the action in JSON format';
 
 COMMENT ON COLUMN "audit_logs"."created_at" IS 'Timestamp when the action was logged';
+
+ALTER TABLE "posts" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
+
+ALTER TABLE "comments" ADD FOREIGN KEY ("post_id") REFERENCES "posts" ("id");
+
+ALTER TABLE "comments" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
+
+ALTER TABLE "post_categories" ADD FOREIGN KEY ("post_id") REFERENCES "posts" ("id");
+
+ALTER TABLE "post_categories" ADD FOREIGN KEY ("category_id") REFERENCES "categories" ("id");
 
 ALTER TABLE "accounts" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
 

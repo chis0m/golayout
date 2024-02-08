@@ -10,15 +10,15 @@ import (
 	"log"
 )
 
-var DB *gorm.DB
+var AppDb *gorm.DB
 
-func InitDB(config *config.Config) error {
+func InitDB(env *config.Config) error {
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s",
-		config.DBHost,
-		config.DbUsername,
-		config.DbPassword,
-		config.DbName,
-		config.DbPort,
+		env.DBHost,
+		env.DbUsername,
+		env.DbPassword,
+		env.DbName,
+		env.DbPort,
 	)
 	if utils.IsLocal() {
 		dsn += " sslmode=disable"
@@ -30,16 +30,16 @@ func InitDB(config *config.Config) error {
 		return err
 	}
 
-	DB = db
+	AppDb = db
 
-	if err := runMigrations(db); err != nil {
+	if err := runMigrations(); err != nil {
 		return err
 	}
 	return nil
 }
 
-func runMigrations(db *gorm.DB) error {
-	dbSQL, err := db.DB()
+func runMigrations() error {
+	dbSQL, err := AppDb.DB()
 	if err != nil {
 		return err
 	}

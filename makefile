@@ -1,17 +1,19 @@
 GOOSE_DRIVER=postgres
-GOOSE_DIR=db/migrations
-GOOSE_DBSTRING="host=localhost user=root password=password dbname=databasae port=5434 sslmode=disable"
+GOOSE_DIR=storage/db/migrations
+GOOSE_DBSTRING="host=localhost user=root password=password dbname=database port=5435 sslmode=disable"
 
 setup: install db_schema dbml_publish
 install:
-	go install github.com/pressly/goose/v3/cmd/goose@v3.17.0
 	npm install -g dbdocs @dbml/cli
+	go install github.com/pressly/goose/v3/cmd/goose@v3.18.0
 	go install github.com/swaggo/swag/cmd/swag@v1.16.2
-	go get github.com/joho/godotenv@latest
-	go get -u github.com/rs/zerolog/log
-	go get -u gorm.io/gorm
-	go get -u gorm.io/driver/postgres
-	go get -u github.com/pressly/goose/v3/cmd/goose
+	go get github.com/joho/godotenv@v1.5.1
+	go get -u github.com/rs/zerolog/log@v1.31.0
+	go get -u gorm.io/gorm@v1.25.6
+	go get -u gorm.io/driver/postgres@v1.5.4
+	go get -u github.com/pressly/goose/v3/cmd/goose@v3.18.0
+	go get -u github.com/gin-gonic/gin@v1.9.1
+	go get -u github.com/gin-contrib/cors@v1.5.0
 
 db_schema:
 	dbml2sql --postgres -o docs/db/schema.sql docs/db/db.dbml

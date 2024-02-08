@@ -4,9 +4,9 @@ services:
     image: postgres:16-alpine
     container_name: database
     environment:
-      - DB_USER=${DB_USER:-root}
-      - DB_PASSWORD=${DB_PASSWORD:-password}
-      - DB_NAME=${DB_NAME:-database}
+      - POSTGRES_USER=${DB_USER:-root}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-password}
+      - POSTGRES_DB=${DB_NAME:-database}
     ports:
       - "${DB_PORT:-5434}:5432"
     volumes:
@@ -18,5 +18,3 @@ services:
       - "${REDIS_PORT:-6384}:6379"
 volumes:
   data-volume:
-
-

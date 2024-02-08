@@ -10,6 +10,8 @@ import (
 
 type Config struct {
 	AppEnv     string `validate:"require"`
+	AppUrl     string
+	AppPort    string
 	DBHost     string `validate:"require"`
 	DbName     string `validate:"require"`
 	DbUsername string `validate:"require"`
@@ -31,6 +33,8 @@ func GetConfig() (*Config, error) {
 
 	return &Config{
 		AppEnv:     utils.Getenv("APP_ENV", "local"),
+		AppUrl:     utils.Getenv("APP_URL", "127.0.0.1"),
+		AppPort:    utils.Getenv("APP_PORT", "5000"),
 		DBHost:     utils.Getenv("DB_HOST", "localhost"),
 		DbName:     utils.Getenv("DB_NAME", "database"),
 		DbUsername: utils.Getenv("DB_USER", "root"),

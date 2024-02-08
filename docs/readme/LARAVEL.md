@@ -197,9 +197,9 @@ var DB *gorm.DB
 
 func InitDB() error {
 	dbHost := os.Getenv("DB_HOST")
-	dbName := os.Getenv("DB_NAME")
-	dbUser := os.Getenv("DB_USERNAME")
-	dbPassword := os.Getenv("DB_PASSWORD")
+	dbName := os.Getenv("POSTGRES_DB")
+	dbUser := os.Getenv("POSTGRES_USERNAME")
+	dbPassword := os.Getenv("POSTGRES_PASSWORD")
 	dbPort := os.Getenv("DB_PORT") // Assuming you also have DB_PORT as an env variable
 
 	// Constructing connection string

@@ -11,11 +11,43 @@ Table users {
     last_name varchar
     email varchar [not null,unique]
     email_verified_at timestamptz
+    password_hash varchar [not null]
     address varchar
     bvn varchar
     created_at timestamptz [default:'now()']
     updated_at timestamptz [default:'now()']
     deleted_at timestamptz
+}
+
+Table posts {
+  id BIGSERIAL [pk]
+  user_id BIGINT [ref: > users.id, not null]
+  title VARCHAR(255) [not null]
+  content TEXT [not null]
+  created_at TIMESTAMPZ [default: `now()`]
+  updated_at TIMESTAMPZ [default: `now()`]
+  deleted_at timestamptz
+}
+
+Table comments {
+  id BIGSERIAL [pk]
+  post_id BIGINT [ref: > posts.id, not null]
+  user_id BIGINT [ref: > users.id, not null]
+  content TEXT [not null]
+  created_at TIMESTAMPZ [default: `now()`]
+  deleted_at TIMESTAMPZ
+}
+
+Table categories {
+  id BIGSERIAL [pk]
+  name VARCHAR(255) [unique, not null]
+  deleted_at timestamptz
+}
+
+Table post_categories {
+  post_id BIGINT [ref: > posts.id, not null]
+  category_id BIGINT [ref: > categories.id, not null]
+  Primary Key (post_id, category_id)
 }
 
 Table accounts {

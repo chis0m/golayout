@@ -1,4 +1,5 @@
 -- +goose Up
+-- SQL to create the transactions table.
 -- +goose StatementBegin
 CREATE TABLE IF NOT EXISTS "transactions" (
     "id" bigserial PRIMARY KEY,
@@ -18,7 +19,15 @@ CREATE TABLE IF NOT EXISTS "transactions" (
     );
 -- +goose StatementEnd
 
--- +goose Down
 -- +goose StatementBegin
+CREATE TRIGGER update_transactions_updated_at_before_update
+    BEFORE UPDATE ON transactions
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+-- +goose StatementEnd
+
+-- +goose Down
+-- SQL to remove the transactions table and its trigger.
+-- +goose StatementBegin
+DROP TRIGGER IF EXISTS update_transactions_updated_at_before_update ON transactions;
 DROP TABLE IF EXISTS "transactions";
 -- +goose StatementEnd
