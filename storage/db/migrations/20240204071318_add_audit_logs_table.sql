@@ -40,16 +40,9 @@ COMMENT ON COLUMN "audit_logs"."data" IS 'Additional data related to the action 
 COMMENT ON COLUMN "audit_logs"."created_at" IS 'Timestamp when the action was logged';
 -- +goose StatementEnd
 
--- +goose StatementBegin
-CREATE TRIGGER update_audit_logs_updated_at_before_update
-    BEFORE UPDATE ON "audit_logs"
-    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
--- +goose StatementEnd
-
 
 -- +goose Down
 -- +goose StatementBegin
-DROP TRIGGER IF EXISTS update_audit_logs_updated_at_before_update ON "audit_logs";
 DROP TABLE IF EXISTS "audit_logs";
 -- +goose StatementEnd
 

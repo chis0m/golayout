@@ -14,14 +14,7 @@ CREATE TABLE IF NOT EXISTS "liens" (
 
 -- +goose StatementEnd
 
--- +goose StatementBegin
-CREATE TRIGGER update_liens_updated_at_before_update
-    BEFORE UPDATE ON "liens"
-    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
--- +goose StatementEnd
-
 -- +goose Down
 -- +goose StatementBegin
-DROP TRIGGER IF EXISTS update_liens_updated_at_before_update ON "liens";
 DROP TABLE IF EXISTS "liens";
 -- +goose StatementEnd

@@ -16,15 +16,7 @@ CREATE TABLE IF NOT EXISTS "users" (
 );
 -- +goose StatementEnd
 
--- +goose StatementBegin
-CREATE TRIGGER update_users_updated_at_before_update
-    BEFORE UPDATE ON users
-    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
--- +goose StatementEnd
-
 -- +goose Down
--- SQL to remove the users table and its trigger.
 -- +goose StatementBegin
-DROP TRIGGER IF EXISTS update_users_updated_at_before_update ON users;
 DROP TABLE IF EXISTS "users";
 -- +goose StatementEnd

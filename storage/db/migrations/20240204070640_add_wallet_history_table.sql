@@ -19,14 +19,7 @@ CREATE TABLE IF NOT EXISTS "wallet_history" (
     );
 -- +goose StatementEnd
 
--- +goose StatementBegin
-CREATE TRIGGER update_wallet_history_updated_at_before_update
-    BEFORE UPDATE ON "wallet_history"
-    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
--- +goose StatementEnd
-
 -- +goose Down
 -- +goose StatementBegin
-DROP TRIGGER IF EXISTS update_wallet_history_updated_at_before_update ON "wallet_history";
 DROP TABLE IF EXISTS "wallet_history";
 -- +goose StatementEnd
