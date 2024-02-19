@@ -19,6 +19,17 @@ Table users {
     deleted_at timestamptz
 }
 
+Table sessions {
+  id uuid [pk]
+  user_id varchar [not null, ref: > users.id]
+  refresh_token varchar [not null]
+  user_agent varchar [not null]
+  client_ip varchar [not null]
+  is_blocked boolean [not null, default: false]
+  expires_at timestamptz [not null]
+  created_at timestamptz [not null, default: `now()`]
+}
+
 Table posts {
   id BIGSERIAL [pk]
   user_id BIGINT [ref: > users.id, not null]

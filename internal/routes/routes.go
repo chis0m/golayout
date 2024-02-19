@@ -18,7 +18,7 @@ func SetupRoutes(router *gin.Engine) {
 
 	userRoutes := router.Group("/users")
 	{
-		userRoutes.GET("/", controllers.GetUsers)
+		userRoutes.GET("/", controllers.GetAllUsers)
 		userRoutes.POST("/signup", controllers.SignUp)
 	}
 

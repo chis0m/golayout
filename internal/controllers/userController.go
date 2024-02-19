@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-// GetUsers fetches all users
+// GetAllUsers fetches all users
 func GetAllUsers(c *gin.Context) {
 	users, err := services.GetAllUsers()
 	if err != nil {
@@ -27,11 +27,12 @@ func SignUp(c *gin.Context) {
 		return
 	}
 
-	if err := services.SignUp(user); err != nil {
+	res, err := services.SignUp(user)
+	if err != nil {
 		log.Err(err).Msg("SignUp: failed to signup user")
 		c.JSON(http.StatusInternalServerError, response.Error("could not signup user", err.Error()))
 		return
 	}
 
-	c.JSON(http.StatusCreated, response.Success("signup successful", user))
+	c.JSON(http.StatusCreated, response.Success("signup successful", res))
 }

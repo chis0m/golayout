@@ -2,7 +2,7 @@
 -- +goose StatementBegin
 CREATE TABLE IF NOT EXISTS "audit_logs" (
     "id" bigserial PRIMARY KEY,
-    "user_id" BigInt NOT NULL REFERENCES "users" ("id"),
+    "user_id" bigInt NOT NULL REFERENCES "users" ("id"),
     "actor_id" Integer,
     "actor_type" Varchar,
     "action" Varchar NOT NULL,

@@ -1,6 +1,6 @@
 -- SQL dump generated using DBML (dbml-lang.org)
 -- Database: PostgreSQL
--- Generated at: 2024-02-06T13:04:01.990Z
+-- Generated at: 2024-02-19T21:28:58.052Z
 
 CREATE TABLE "users" (
   "id" bigserial PRIMARY KEY,
@@ -14,6 +14,17 @@ CREATE TABLE "users" (
   "created_at" timestamptz DEFAULT 'now()',
   "updated_at" timestamptz DEFAULT 'now()',
   "deleted_at" timestamptz
+);
+
+CREATE TABLE "sessions" (
+  "id" uuid PRIMARY KEY,
+  "user_id" varchar NOT NULL,
+  "refresh_token" varchar NOT NULL,
+  "user_agent" varchar NOT NULL,
+  "client_ip" varchar NOT NULL,
+  "is_blocked" boolean NOT NULL DEFAULT false,
+  "expires_at" timestamptz NOT NULL,
+  "created_at" timestamptz NOT NULL DEFAULT (now())
 );
 
 CREATE TABLE "posts" (
@@ -173,6 +184,8 @@ COMMENT ON COLUMN "audit_logs"."resource_id" IS 'Identifier of the specific reso
 COMMENT ON COLUMN "audit_logs"."data" IS 'Additional data related to the action in JSON format';
 
 COMMENT ON COLUMN "audit_logs"."created_at" IS 'Timestamp when the action was logged';
+
+ALTER TABLE "sessions" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
 
 ALTER TABLE "posts" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
 

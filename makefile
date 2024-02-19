@@ -1,6 +1,6 @@
 GOOSE_DRIVER=postgres
 GOOSE_DIR=storage/db/migrations
-GOOSE_DBSTRING="host=localhost user=root password=password dbname=database port=5435 sslmode=disable"
+GOOSE_DBSTRING="host=localhost user=app-user password=app-password dbname=app-database port=5435 sslmode=disable"
 
 setup: install db_schema dbml_publish
 install:
@@ -14,6 +14,7 @@ install:
 	go get -u github.com/pressly/goose/v3/cmd/goose@v3.18.0
 	go get -u github.com/gin-gonic/gin@v1.9.1
 	go get -u github.com/gin-contrib/cors@v1.5.0
+	go get -u github.com/o1egl/paseto
 
 db_schema:
 	dbml2sql --postgres -o docs/db/schema.sql docs/db/db.dbml

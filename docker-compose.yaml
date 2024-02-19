@@ -4,13 +4,13 @@ services:
     image: postgres:16-alpine
     container_name: database
     environment:
-      - POSTGRES_USER=${DB_USER:-root}
-      - POSTGRES_PASSWORD=${DB_PASSWORD:-password}
-      - POSTGRES_DB=${DB_NAME:-database}
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=password
     ports:
       - "${DB_PORT:-5434}:5432"
     volumes:
       - ./data/database:/var/lib/postgresql/data
+      - ./storage/init:/docker-entrypoint-initdb.d
   redis:
     image: redis:7-alpine
     container_name: cache

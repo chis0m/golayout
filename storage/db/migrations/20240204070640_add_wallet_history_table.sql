@@ -1,10 +1,10 @@
 -- +goose Up
 -- +goose StatementBegin
 CREATE TABLE IF NOT EXISTS "wallet_history" (
-    "id" int PRIMARY KEY,
-    "wallet_id" int NOT NULL REFERENCES "wallets" ("id"),
+    "id" bigint PRIMARY KEY,
+    "wallet_id" bigint NOT NULL REFERENCES "wallets" ("id"),
     "public_id" varchar NOT NULL,
-    "balance" int NOT NULL,
+    "balance" bigint NOT NULL,
     "currency" varchar(50) NOT NULL,
     "change_amount" int NOT NULL,
     "locked_amount" int NOT NULL,
