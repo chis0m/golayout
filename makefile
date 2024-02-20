@@ -55,4 +55,3 @@ swag:
 	swag init
 
 .PHONY: setup goose_operations testers server seed_db swag
-
