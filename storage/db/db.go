@@ -21,13 +21,10 @@ func InitDB(env *config.Config) (*gorm.DB, error) {
 	if utils.IsLocal() {
 		dsn += " sslmode=disable"
 	}
-
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-
 	if err != nil {
 		return nil, err
 	}
-
 	if err := runMigrations(db); err != nil {
 		return nil, err
 	}
@@ -39,11 +36,9 @@ func runMigrations(db *gorm.DB) error {
 	if err != nil {
 		return err
 	}
-
 	if err := goose.Up(dbSQL, "storage/db/migrations"); err != nil {
-		log.Fatalf("Could not apply migrations: %v", err)
+		log.Fatalf("Could not run migrations: %v", err)
 		return err
 	}
-
 	return nil
 }
