@@ -22,6 +22,7 @@ type Config struct {
 	RedisPort            string
 	AccessTokenDuration  string
 	RefreshTokenDuration string
+	TokenSymmetricKey    string `validate:"require"`
 }
 
 func GetConfig() (*Config, error) {
@@ -48,5 +49,6 @@ func GetConfig() (*Config, error) {
 		RedisPort:            os.Getenv("REDIS_PORT"),
 		AccessTokenDuration:  utils.Getenv("ACCESS_TOKEN_DURATION", "15m"),
 		RefreshTokenDuration: utils.Getenv("REFRESH_TOKEN_DURATION", "24h"),
+		TokenSymmetricKey:    os.Getenv("TOKEN_SYMMETRIC_KEY"),
 	}, nil
 }

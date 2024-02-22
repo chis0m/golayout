@@ -1,27 +1,41 @@
 package services
 
 import (
+	"errors"
+	"fmt"
+	"github.com/rs/zerolog/log"
 	"go-layout/internal/models"
-	"go-layout/storage/db"
+	"go-layout/pkg/token"
+	"go-layout/types"
 	"go-layout/utils"
+	"gorm.io/gorm"
 )
 
-type UserSignUpRequestDTO struct {
-	FirstName string `json:"first_name" binding:"required"`
-	LastName  string `json:"last_name" binding:"required"`
-	Email     string `json:"email" binding:"required,email"`
-	Password  string `json:"password" binding:"required"`
+type UserServiceInterface interface {
+	GetAllUsers() ([]models.User, error)
+	SignUp(raw types.UserSignUpRequestDTO) (*models.User, error)
+	Login(raw types.UserLoginRequestDTO) (*models.User, error)
 }
 
-// GetAllUsers retrieves all users from the database
-func GetAllUsers() ([]models.User, error) {
+type UserService struct {
+	db         *gorm.DB
+	tokenMaker token.Maker
+}
+
+func NewUserService(db *gorm.DB, tokenMaker token.Maker) UserServiceInterface {
+	return &UserService{
+		db:         db,
+		tokenMaker: tokenMaker,
+	}
+}
+
+func (us *UserService) GetAllUsers() ([]models.User, error) {
 	var users []models.User
-	result := db.AppDb.Find(&users)
+	result := us.db.Find(&users)
 	return users, result.Error
 }
 
-// SignUp adds a new user to the database
-func SignUp(raw UserSignUpRequestDTO) (*models.User, error) {
+func (us *UserService) SignUp(raw types.UserSignUpRequestDTO) (*models.User, error) {
 	hashedPassword, err := utils.HashPassword(raw.Password)
 	if err != nil {
 		return nil, err
@@ -32,9 +46,28 @@ func SignUp(raw UserSignUpRequestDTO) (*models.User, error) {
 		Email:        raw.Email,
 		PasswordHash: hashedPassword,
 	}
-	err = db.AppDb.Create(user).Error
+	err = us.db.Create(user).Error
 	if err != nil {
 		return nil, err
 	}
 	return user, nil
+}
+
+func (us *UserService) Login(raw types.UserLoginRequestDTO) (*models.User, error) {
+	var user models.User
+	err := us.db.Where("email = ?", raw.Email).First(&user).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, errors.New("user not found")
+		} else {
+			return nil, fmt.Errorf("could not fetch user %+v", err)
+		}
+	}
+
+	err = utils.VerifyPassword(user.PasswordHash, raw.Password)
+	if err != nil {
+		log.Error().Msgf("Password verifcation failed %s", err)
+		return nil, fmt.Errorf("invlid credentials %s", err)
+	}
+	return nil, nil
 }

@@ -1,26 +1,19 @@
 package routes
 
 import (
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"go-layout/internal/controllers"
-	"net/http"
+	"go-layout/internal/app"
 )
 
-func SetupRoutes(router *gin.Engine) {
-	router.GET("/", func(context *gin.Context) {
-		context.JSON(http.StatusOK, gin.H{})
-	})
-	router.GET("/health", func(context *gin.Context) {
-		context.JSON(http.StatusOK, gin.H{
-			"message": "Healthy",
-		})
-	})
+func SetupRoutes(appCtx *app.Context) *gin.Engine {
+	router := gin.Default()
+	corsConfig := cors.DefaultConfig()
+	corsConfig.AllowHeaders = []string{"Origin", "Content-Length", "Content-Type", "Authorization"}
+	router.Use(cors.New(corsConfig))
 
-	userRoutes := router.Group("/users")
-	{
-		userRoutes.GET("/", controllers.GetAllUsers)
-		userRoutes.POST("/signup", controllers.SignUp)
-	}
+	// routes
+	UserRoutes(router, appCtx)
 
-	// Additional routes can be defined here
+	return router
 }

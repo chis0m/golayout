@@ -10,9 +10,7 @@ import (
 	"log"
 )
 
-var AppDb *gorm.DB
-
-func InitDB(env *config.Config) error {
+func InitDB(env *config.Config) (*gorm.DB, error) {
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s",
 		env.DBHost,
 		env.DbUsername,
@@ -27,19 +25,17 @@ func InitDB(env *config.Config) error {
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	AppDb = db
-
-	if err := runMigrations(); err != nil {
-		return err
+	if err := runMigrations(db); err != nil {
+		return nil, err
 	}
-	return nil
+	return db, nil
 }
 
-func runMigrations() error {
-	dbSQL, err := AppDb.DB()
+func runMigrations(db *gorm.DB) error {
+	dbSQL, err := db.DB()
 	if err != nil {
 		return err
 	}
