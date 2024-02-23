@@ -16,7 +16,6 @@ const (
 )
 
 func AuthMiddleware(tokenMaker token.Maker) gin.HandlerFunc {
-	// an anonymous function: this is actually the authentication middleware
 	return func(ctx *gin.Context) {
 		authorizationHeader := ctx.GetHeader(authorizationHeaderKey)
 		if len(authorizationHeader) == 0 {

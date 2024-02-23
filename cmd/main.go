@@ -7,7 +7,7 @@ import (
 	"go-layout/config"
 	"go-layout/internal/app"
 	"go-layout/internal/routes"
-	"go-layout/storage/db"
+	"go-layout/store/db"
 	"go-layout/utils"
 	"gorm.io/gorm"
 	"os"
@@ -24,12 +24,12 @@ func main() {
 	if err != nil {
 		log.Fatal().Err(err).Msg("AppDb connection failed")
 	}
-	appContext, err := app.Initialize(appDB, env.TokenSymmetricKey)
+	appContext, err := app.Initialize(env, appDB, env.TokenSymmetricKey)
 	if err != nil {
 		log.Fatal().Err(err).Msgf("Failed to initialize application: %v", err)
 	}
 	router := routes.SetupRoutes(appContext)
-	err = router.Run(fmt.Sprintf("%s:%s", env.AppUrl, env.AppPort))
+	err = router.Run(fmt.Sprintf("%s:%s", env.APIUrl, env.AppPort))
 	if err != nil {
 		log.Fatal().Err(err).Msg("Could not start server")
 	}

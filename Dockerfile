@@ -16,7 +16,7 @@ RUN adduser -D -g '' golang
 WORKDIR /app
 COPY --from=builder /app/main .
 COPY .env.deploy .env
-COPY storage/goose/migrations db/goose/migrations
+COPY store/db/migrations store/db/migrations
 COPY docs/swagger.json docs/swagger.json
 COPY wait-for.sh .
 RUN chmod +x /app/wait-for.sh

@@ -6,11 +6,13 @@ import (
 	"github.com/rs/zerolog/log"
 	"go-layout/utils"
 	"os"
+	"time"
 )
 
 type Config struct {
 	AppName              string
 	AppEnv               string `validate:"require"`
+	APIUrl               string
 	AppUrl               string
 	AppPort              string
 	DBHost               string `validate:"require"`
@@ -20,8 +22,8 @@ type Config struct {
 	DbPort               string `validate:"require"`
 	RedisHost            string
 	RedisPort            string
-	AccessTokenDuration  string
-	RefreshTokenDuration string
+	AccessTokenDuration  time.Duration
+	RefreshTokenDuration time.Duration
 	TokenSymmetricKey    string `validate:"require"`
 }
 
@@ -38,7 +40,8 @@ func GetConfig() (*Config, error) {
 	return &Config{
 		AppName:              utils.Getenv("APP_NAME", "GoLayoutApp"),
 		AppEnv:               utils.Getenv("APP_ENV", "local"),
-		AppUrl:               utils.Getenv("APP_URL", "127.0.0.1"),
+		APIUrl:               utils.Getenv("API_URL", "127.0.0.1"),
+		AppUrl:               utils.Getenv("APP_URL", "localhost"),
 		AppPort:              utils.Getenv("APP_PORT", "5000"),
 		DBHost:               utils.Getenv("DB_HOST", "localhost"),
 		DbName:               utils.Getenv("DB_NAME", "database"),
@@ -47,8 +50,8 @@ func GetConfig() (*Config, error) {
 		DbPort:               utils.Getenv("DB_PORT", "5434"),
 		RedisHost:            os.Getenv("REDIS_HOST"),
 		RedisPort:            os.Getenv("REDIS_PORT"),
-		AccessTokenDuration:  utils.Getenv("ACCESS_TOKEN_DURATION", "15m"),
-		RefreshTokenDuration: utils.Getenv("REFRESH_TOKEN_DURATION", "24h"),
+		AccessTokenDuration:  utils.GetDuration("ACCESS_TOKEN_DURATION", "15m"),
+		RefreshTokenDuration: utils.GetDuration("REFRESH_TOKEN_DURATION", "24h"),
 		TokenSymmetricKey:    os.Getenv("TOKEN_SYMMETRIC_KEY"),
 	}, nil
 }

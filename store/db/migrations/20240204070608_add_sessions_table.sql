@@ -8,7 +8,9 @@ CREATE TABLE IF NOT EXISTS "sessions" (
     "client_ip" varchar NOT NULL,
     "is_blocked" boolean NOT NULL DEFAULT false,
     "expires_at" timestamptz NOT NULL,
-    "created_at" timestamptz NOT NULL DEFAULT (now())
+    "created_at" timestamptz NOT NULL DEFAULT (now()),
+    "updated_at" timestamptz NOT NULL DEFAULT (now()),
+    "deleted_at" timestamptz DEFAULT (NULL)
 );
 -- +goose StatementEnd
 

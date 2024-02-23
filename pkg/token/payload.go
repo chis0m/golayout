@@ -7,11 +7,11 @@ import (
 )
 
 type Claims struct {
-	Issuer    string                 `json:"issuer"`
-	Subject   string                 `json:"subject"`
-	Audience  string                 `json:"audience"`
-	ExpiresAt time.Time              `json:"expires_at"`
-	Data      map[string]interface{} `json:"data,omitempty"`
+	Issuer   string                 `json:"issuer"`
+	Subject  string                 `json:"subject"`
+	Audience string                 `json:"audience"`
+	Duration time.Duration          `json:"duration"`
+	Data     map[string]interface{} `json:"data,omitempty"`
 }
 
 type Payload struct {
@@ -34,7 +34,7 @@ func NewPayload(claim Claims) (*Payload, error) {
 		Iss:  claim.Issuer,
 		Sub:  claim.Subject,
 		Aud:  claim.Audience,
-		Exp:  claim.ExpiresAt,
+		Exp:  time.Now().Add(claim.Duration),
 		Data: claim.Data,
 	}, nil
 }

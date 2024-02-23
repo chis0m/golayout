@@ -1,8 +1,10 @@
 package utils
 
 import (
-	"go-layout/types"
+	"fmt"
+	"go-layout/internal/types"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -15,6 +17,16 @@ func Getenv(variable string, defaultValue ...string) string {
 		return ""
 	}
 	return env
+}
+
+func GetDuration(variable string, defaultValue ...string) time.Duration {
+	durationStr := Getenv(variable, defaultValue...)
+	duration, err := time.ParseDuration(durationStr)
+	if err != nil {
+		fmt.Println("Error parsing duration:", err)
+		return 0
+	}
+	return duration
 }
 
 func IsLocal() bool {
@@ -35,4 +47,15 @@ func PointerInt(i int) *int {
 
 func PointerInt64(i int64) *int64 {
 	return &i
+}
+
+func PointerUint64(i uint64) *uint64 {
+	return &i
+}
+
+func CapitalizeFirst(s string) string {
+	if s == "" {
+		return ""
+	}
+	return strings.ToUpper(string(s[0])) + s[1:]
 }

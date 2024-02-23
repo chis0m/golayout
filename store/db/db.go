@@ -36,7 +36,7 @@ func runMigrations(db *gorm.DB) error {
 	if err != nil {
 		return err
 	}
-	if err := goose.Up(dbSQL, "storage/db/migrations"); err != nil {
+	if err := goose.Up(dbSQL, "store/db/migrations"); err != nil {
 		log.Fatalf("Could not run migrations: %v", err)
 		return err
 	}
