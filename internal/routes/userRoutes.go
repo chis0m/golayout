@@ -2,7 +2,7 @@ package routes
 
 import (
 	"github.com/gin-gonic/gin"
-	"go-layout/internal/app"
+	"go-layout/cmd/app"
 	"go-layout/internal/middleware"
 )
 

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/rs/zerolog/log"
 	"go-layout/config"
-	"go-layout/internal/httpx"
+	"go-layout/internal/appx"
 	"go-layout/internal/models"
 	"go-layout/internal/types"
 	"go-layout/pkg/token"
@@ -59,7 +59,7 @@ func (as *AuthService) Login(agent string, clientIp string, raw types.UserLoginR
 	err := as.db.Where("email = ?", raw.Email).First(&user).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, httpx.NewError(http.StatusBadRequest, "user not found")
+			return nil, appx.NewError(http.StatusBadRequest, "user not found")
 		} else {
 			return nil, fmt.Errorf("could not fetch user %+v", err)
 		}
@@ -105,7 +105,7 @@ func (as *AuthService) Login(agent string, clientIp string, raw types.UserLoginR
 	err = as.db.Create(session).Error
 	if err != nil {
 		log.Err(err).Msg("AuthService Login: failed inserting session to database")
-		return nil, httpx.NewError(http.StatusBadRequest, "internal server error")
+		return nil, appx.NewError(http.StatusBadRequest, "internal server error")
 	}
 
 	return &types.UserLoginResponse{
@@ -126,39 +126,39 @@ func (as *AuthService) Login(agent string, clientIp string, raw types.UserLoginR
 func (as *AuthService) Renew(raw types.RefreshTokenRequestDTO) (*types.RefreshTokenResponse, error) {
 	refreshPayload, err := as.tokenMaker.VerifyToken(raw.RefreshToken)
 	if err != nil {
-		return nil, httpx.NewError(http.StatusBadRequest, "invalid access token")
+		return nil, appx.NewError(http.StatusBadRequest, "invalid access token")
 	}
 
 	var session models.Session
 	err = as.db.Where("id = ?", refreshPayload.ID).First(&session).Error
 	if err != nil {
 		log.Err(err).Msg("AuthService Logout: Failed to fetch session from DB")
-		return nil, httpx.NewError(http.StatusBadRequest, "internal server error")
+		return nil, appx.NewError(http.StatusBadRequest, "internal server error")
 	}
 
 	if session.IsBlocked {
-		return nil, httpx.NewError(http.StatusBadRequest, "this session is blocked")
+		return nil, appx.NewError(http.StatusBadRequest, "this session is blocked")
 	}
 
 	var user models.User
 	err = as.db.Where("id = ?", session.UserId).First(&user).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, httpx.NewError(http.StatusBadRequest, "user not found")
+			return nil, appx.NewError(http.StatusBadRequest, "user not found")
 		} else {
 			return nil, fmt.Errorf("could not fetch user %+v", err)
 		}
 	}
 	if refreshPayload.Sub != user.Email {
-		return nil, httpx.NewError(http.StatusBadRequest, "incorrect session user")
+		return nil, appx.NewError(http.StatusBadRequest, "incorrect session user")
 	}
 
 	if session.RefreshToken != raw.RefreshToken {
-		return nil, httpx.NewError(http.StatusBadRequest, "mismatched session token")
+		return nil, appx.NewError(http.StatusBadRequest, "mismatched session token")
 	}
 
 	if time.Now().After(session.ExpiresAt) {
-		return nil, httpx.NewError(http.StatusBadRequest, "expired session")
+		return nil, appx.NewError(http.StatusBadRequest, "expired session")
 	}
 
 	claims := token.Claims{
@@ -178,13 +178,13 @@ func (as *AuthService) Renew(raw types.RefreshTokenRequestDTO) (*types.RefreshTo
 func (as *AuthService) Logout(raw types.RefreshTokenRequestDTO) error {
 	refreshPayload, err := as.tokenMaker.VerifyToken(raw.RefreshToken)
 	if err != nil {
-		return httpx.NewError(http.StatusBadRequest, "invalid access token")
+		return appx.NewError(http.StatusBadRequest, "invalid access token")
 	}
 	var session models.Session
 	err = as.db.Where("id = ?", refreshPayload.ID).First(&session).Error
 	if err != nil {
 		log.Err(err).Msg("AuthService Logout: Failed to fetch session from DB")
-		return httpx.NewError(http.StatusBadRequest, "internal server error")
+		return appx.NewError(http.StatusBadRequest, "internal server error")
 	}
 	result := as.db.Delete(&session)
 	if result.Error != nil {
@@ -194,7 +194,7 @@ func (as *AuthService) Logout(raw types.RefreshTokenRequestDTO) error {
 
 	if result.RowsAffected == 0 {
 		log.Error().Msg("AuthService Logout: session data was not deleted")
-		return httpx.NewError(http.StatusBadRequest, "failed to logout")
+		return appx.NewError(http.StatusBadRequest, "failed to logout")
 	}
 
 	return nil

@@ -3,7 +3,7 @@ package routes
 import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"go-layout/internal/app"
+	"go-layout/cmd/app"
 	httpLogger "go-layout/pkg/logger"
 )
 

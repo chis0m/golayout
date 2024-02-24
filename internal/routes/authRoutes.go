@@ -2,7 +2,7 @@ package routes
 
 import (
 	"github.com/gin-gonic/gin"
-	"go-layout/internal/app"
+	"go-layout/cmd/app"
 )
 
 func AuthRoutes(router *gin.Engine, appCtx *app.Context) {
