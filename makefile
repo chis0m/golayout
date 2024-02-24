@@ -1,5 +1,5 @@
 GOOSE_DRIVER=postgres
-GOOSE_DIR=storage/db/migrations
+GOOSE_DIR=store/db/migrations
 GOOSE_DBSTRING="host=localhost user=app-user password=app-password dbname=app-database port=5435 sslmode=disable"
 
 setup: install db_schema dbml_publish
