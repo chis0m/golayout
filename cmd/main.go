@@ -18,18 +18,18 @@ func main() {
 	if utils.IsLocal() {
 		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr}).With().Caller().Timestamp().Logger()
 	}
-	env, err := config.GetConfig()
+	env, err := config.LoadConfig()
 	var appDB *gorm.DB
 	appDB, err = db.InitDB(env)
 	if err != nil {
 		log.Fatal().Err(err).Msg("AppDb connection failed")
 	}
-	appContext, err := app.Initialize(env, appDB, env.TokenSymmetricKey)
+	appContext, err := app.Initialize(env, appDB, env.Token.SymmetricKey)
 	if err != nil {
 		log.Fatal().Err(err).Msgf("Failed to initialize application: %v", err)
 	}
 	router := routes.SetupRoutes(appContext)
-	err = router.Run(fmt.Sprintf("%s:%s", env.APIUrl, env.AppPort))
+	err = router.Run(fmt.Sprintf("%s:%s", env.App.Url, env.App.Port))
 	if err != nil {
 		log.Fatal().Err(err).Msg("Could not start server")
 	}

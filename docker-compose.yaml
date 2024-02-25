@@ -7,7 +7,7 @@ services:
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=password
     ports:
-      - "${DB_PORT:-5434}:5432"
+      - "${DB_PORT:-5432}:5432"
     volumes:
       - ./data/database:/var/lib/postgresql/data
       - ./store/db/init:/docker-entrypoint-initdb.d
@@ -15,6 +15,12 @@ services:
     image: redis:7-alpine
     container_name: cache
     ports:
-      - "${REDIS_PORT:-6384}:6379"
+      - "${REDIS_PORT:-6379}:6379"
+  mailhog:
+    image: mailhog/mailhog
+    container_name: mailhog
+    ports:
+      - "${MAIL_PORT:-1025}:1025"
+      - "8025:8025"
 volumes:
   data-volume:

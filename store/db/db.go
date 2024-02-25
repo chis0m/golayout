@@ -12,11 +12,11 @@ import (
 
 func InitDB(env *config.Config) (*gorm.DB, error) {
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s",
-		env.DBHost,
-		env.DbUsername,
-		env.DbPassword,
-		env.DbName,
-		env.DbPort,
+		env.Db.Host,
+		env.Db.Username,
+		env.Db.Password,
+		env.Db.Name,
+		env.Db.Port,
 	)
 	if utils.IsLocal() {
 		dsn += " sslmode=disable"

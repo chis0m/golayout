@@ -39,7 +39,8 @@ func NewAuthService(env *config.Config, db *gorm.DB, tokenMaker token.Maker) Aut
 func (as *AuthService) SignUp(raw types.UserSignUpRequestDTO) (*models.User, error) {
 	hashedPassword, err := utils.HashPassword(raw.Password)
 	if err != nil {
-		return nil, err
+		log.Err(err).Msg("Error while hashing password")
+		return nil, appx.NewError(http.StatusInternalServerError, "internal server error")
 	}
 	user := &models.User{
 		FirstName:    utils.PointerString(raw.FirstName),
@@ -71,10 +72,10 @@ func (as *AuthService) Login(agent string, clientIp string, raw types.UserLoginR
 		return nil, fmt.Errorf("invlid credentials %s", err)
 	}
 	claims := token.Claims{
-		Issuer:   as.env.AppName,
+		Issuer:   as.env.App.Name,
 		Subject:  user.Email,
-		Audience: as.env.AppUrl,
-		Duration: as.env.AccessTokenDuration,
+		Audience: as.env.App.Url,
+		Duration: as.env.Token.AccessDuration,
 		Data:     map[string]interface{}{"type": "original"},
 	}
 	accessToken, accessPayload, err := as.tokenMaker.CreateToken(claims)
@@ -84,10 +85,10 @@ func (as *AuthService) Login(agent string, clientIp string, raw types.UserLoginR
 	}
 
 	claims = token.Claims{
-		Issuer:   as.env.AppName,
+		Issuer:   as.env.App.Name,
 		Subject:  user.Email,
-		Audience: as.env.AppUrl,
-		Duration: as.env.RefreshTokenDuration,
+		Audience: as.env.App.Url,
+		Duration: as.env.Token.RefreshDuration,
 		Data:     make(map[string]interface{}),
 	}
 	refreshToken, refreshPayload, err := as.tokenMaker.CreateToken(claims)
@@ -162,10 +163,10 @@ func (as *AuthService) Renew(raw types.RefreshTokenRequestDTO) (*types.RefreshTo
 	}
 
 	claims := token.Claims{
-		Issuer:   as.env.AppName,
+		Issuer:   as.env.App.Name,
 		Subject:  user.Email,
-		Audience: as.env.AppUrl,
-		Duration: as.env.AccessTokenDuration,
+		Audience: as.env.App.Url,
+		Duration: as.env.Token.AccessDuration,
 		Data:     map[string]interface{}{"type": "renewed"},
 	}
 	newAccessToken, newAccessPayload, err := as.tokenMaker.CreateToken(claims)
